@@ -1,0 +1,13 @@
+.card {
+  color: white;
+  border: solid 1px white;
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.card:hover > span {
+  opacity: 1;
+}

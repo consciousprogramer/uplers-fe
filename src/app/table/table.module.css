@@ -1,0 +1,24 @@
+.wrapper {
+  padding: 50px;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #d501f1;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  gap: 50px;
+}
+
+@media (min-width: 650px) {
+  .wrapper {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+}
+
+@media (min-width: 1280px) {
+  .wrapper {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+  }
+}

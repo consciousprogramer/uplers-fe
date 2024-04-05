@@ -1,0 +1,33 @@
+.wrapper-div {
+  width: 100%;
+  height: 100vh;
+  background-color: #35b4eb;
+  border: 1px solid red;
+}
+
+.center-child-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-child-grid {
+  display: grid;
+  place-items: center;
+}
+
+.center-child-transform {
+  position: relative;
+}
+
+.child {
+  color: white;
+  font-size: 2rem;
+}
+
+.positioned-child {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
