@@ -1,1 +1,1 @@
-code for the assignment at : [text](https://inxtest.netlify.app/)
+code for the assignment at : [The assignment](https://inxtest.netlify.app/)
