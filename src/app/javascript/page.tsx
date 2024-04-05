@@ -4,13 +4,14 @@ import {
   IStation,
 } from "@/interfaces/api/response/belgiumPublicTransport"
 import { PDTServices } from "@/services/belgiumPublicTransport.services"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import useFetch from "@/hooks/useFetch"
 import Link from "next/link"
 import { ImSortAmountAsc, ImSortAmountDesc } from "react-icons/im"
-import javascriptPageStyles from "./javascript.module.css"
+import javascriptPageStyles from "@/components/Stations/station.module.css"
 
 import _ from "lodash"
+import StationDataRow from "@/components/Stations/StationDataRow"
 
 function Javascript() {
   const [sortData, setSortData] = useState<{
@@ -69,6 +70,44 @@ function Javascript() {
     [setData]
   )
 
+  // handle sortData change here
+  useEffect(() => {
+    setData((prevState) => {
+      if (prevState) {
+        return {
+          ...prevState,
+          station: prevState.station.sort((a, b) => {
+            if (a[sortData.sortOn] < b[sortData.sortOn]) {
+              return sortData.sortOrder === "asc" ? -1 : 1
+            }
+            if (a[sortData.sortOn] > b[sortData.sortOn]) {
+              return sortData.sortOrder === "asc" ? 1 : -1
+            }
+            return 0
+          }),
+        }
+      }
+      return prevState
+    })
+  }, [sortData, setData])
+
+  const sortHandler = useCallback(
+    (field: keyof IRetrieveAllStationsResponse["station"][number]) => {
+      if (sortData.sortOn === field) {
+        setSortData((prevState) => ({
+          ...prevState,
+          sortOrder: prevState.sortOrder === "asc" ? "desc" : "asc",
+        }))
+      } else {
+        setSortData({
+          sortOn: field,
+          sortOrder: "asc",
+        })
+      }
+    },
+    [sortData]
+  )
+
   if (error) {
     return <p>Error</p>
   }
@@ -88,70 +127,20 @@ function Javascript() {
         >)
       : []
 
-  const sortHandler = (
-    field: keyof IRetrieveAllStationsResponse["station"][number]
-  ) => {
-    if (sortData.sortOn === field) {
-      setSortData((prevState) => ({
-        ...prevState,
-        sortOrder: prevState.sortOrder === "asc" ? "desc" : "asc",
-      }))
-
-      setData((prevState) => {
-        if (prevState) {
-          return {
-            ...prevState,
-            station: prevState.station.sort((a, b) => {
-              if (a[field] < b[field]) {
-                return sortData.sortOrder === "asc" ? -1 : 1
-              }
-              if (a[field] > b[field]) {
-                return sortData.sortOrder === "asc" ? 1 : -1
-              }
-              return 0
-            }),
-          }
-        }
-        return prevState
-      })
-    } else {
-      setSortData({
-        sortOn: field,
-        sortOrder: "asc",
-      })
-
-      setData((prevState) => {
-        if (prevState) {
-          return {
-            ...prevState,
-            station: prevState.station.sort((a, b) => {
-              if (a[field] < b[field]) {
-                return -1
-              }
-              if (a[field] > b[field]) {
-                return 1
-              }
-              return 0
-            }),
-          }
-        }
-        return prevState
-      })
-    }
-  }
-
   return (
     <>
+      {/* search panel */}
       {
         <section className={javascriptPageStyles.searchSection}>
           <div className="">
             <input
               type="text"
               value={searchData.term}
+              placeholder="search"
               onChange={(e) =>
                 setSearchData((prevState) => ({
                   ...prevState,
-                  term: e.target.value.trim(),
+                  term: e.target.value.trimStart(),
                 }))
               }
             />
@@ -176,6 +165,8 @@ function Javascript() {
           </div>
         </section>
       }
+
+      {/* table panel */}
       {stations.length ? (
         <table className={javascriptPageStyles.table}>
           <thead>
@@ -219,35 +210,12 @@ function Javascript() {
                 station[searchData.searchField].includes(searchData.term)
               )
               .map((station) => (
-                <tr key={station.id}>
-                  {stationsFields.map((field) => {
-                    if (field === "notes") {
-                      return (
-                        <td key={field}>
-                          <input
-                            type="text"
-                            defaultValue={station[field]}
-                            className={javascriptPageStyles.input}
-                            onChange={(e) =>
-                              addNotesHandler(station.id, e.target.value)
-                            }
-                          />
-                        </td>
-                      )
-                    } else {
-                      return <td key={field}>{station[field]}</td>
-                    }
-                  })}
-                  <td>
-                    <Link
-                      href={`https://www.google.com/maps?q=${station.locationX},${station.locationY}`}
-                      target="_blank"
-                      className={javascriptPageStyles.link}
-                    >
-                      View on google Maps
-                    </Link>
-                  </td>
-                </tr>
+                <StationDataRow
+                  addNotesHandler={addNotesHandler}
+                  key={station.id}
+                  station={station}
+                  stationsFields={stationsFields}
+                />
               ))}
           </tbody>
         </table>
