@@ -148,14 +148,12 @@ function Javascript() {
             <input
               type="text"
               value={searchData.term}
-              onChange={_.debounce(
-                (e) =>
-                  setSearchData((prevState) => ({
-                    ...prevState,
-                    term: e.target.value.trim(),
-                  })),
-                500
-              )}
+              onChange={(e) =>
+                setSearchData((prevState) => ({
+                  ...prevState,
+                  term: e.target.value.trim(),
+                }))
+              }
             />
             <select
               name="searchField"
