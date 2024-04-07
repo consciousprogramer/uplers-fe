@@ -4,7 +4,7 @@ export interface IRetrieveAllStationsResponse {
   station: IStation[]
 }
 
-export interface IStation {
+export interface IStation extends Record<string, string> {
   locationX: string
   locationY: string
   id: string
